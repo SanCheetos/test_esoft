@@ -6,7 +6,6 @@ import { observer } from 'mobx-react-lite';
 import { Context } from '..';
 import { getBosses, getMyExec, logout, registration } from '../http/userApi';
 import { getAll, getOne, newTask, update } from '../http/tasksApi';
-import { useFetching } from '../hooks/useFetching';
 
 const Tasks = observer(() => {
     const {user, tasks} = useContext(Context)
@@ -47,7 +46,8 @@ const Tasks = observer(() => {
             await newTask(heading, desc, dateComplete, priority, executor_id)// heading, desc, dateComplete, priority, executor_id
         }
         else {
-            await update(idTask, heading, desc, dateComplete, priority, status, executor_id)
+            const onlyStatus = user.user.userId !== []
+            await update(idTask, heading, desc, dateComplete, priority, status, executor_id, onlyStatus)
         }
         setIsTaskForm(false)
         setTaskChanged(!taskChanged)
@@ -147,7 +147,7 @@ const Tasks = observer(() => {
                         <option value="week+">Более, чем неделю</option>
                     </Form.Select>
                 </div>
-                {!user.user.userId 
+                {tasks.executors.length > 0
                 &&
                 <div>
                     <h3>Ответственный:</h3>
@@ -196,13 +196,14 @@ const Tasks = observer(() => {
                     style={{minHeight: window.innerHeight}}
                 >
                     <Card style={{width: 600}} className="p-5">
-                        <h2 className="m-auto"> {isUpdate ? '*Заголовок задачи*' : 'Новая задача'} </h2>
+                        <h2 className="m-auto"> {idTask !== 0 ? heading : 'Новая задача'} </h2>
                         <Form className="d-flex flex-column">
                             <div  className="mt-3">
                                 <p>Заголовок</p>
                                 <Form.Control
                                     placeholder="Введите заголовок"
                                     value={heading}
+                                    disabled={(idTask !== 0 && executor_id === user.user.id)}
                                     onChange={(e) => setHeading(e.target.value)}
                                 />
                             </div>
@@ -212,6 +213,7 @@ const Tasks = observer(() => {
                                 <Form.Control
                                     placeholder="Введите описание"
                                     value={desc}
+                                    disabled={(idTask !== 0 && executor_id === user.user.id)}
                                     onChange={(e) => setDesc(e.target.value)}
                                 />
                             </div>
@@ -221,13 +223,17 @@ const Tasks = observer(() => {
                                 <Form.Control
                                     type="date"
                                     value={dateComplete}
+                                    disabled={(idTask !== 0 && executor_id === user.user.id)}
                                     onChange={(e) => setDateComplete(e.target.value)}
                                 />
                             </div>
                             
                             <div  className="mt-4">
                                 <p>Приоритет</p>
-                                <Form.Select value={priority} onChange={(e) => setPriority(e.target.value)}>
+                                <Form.Select 
+                                    disabled={(idTask !== 0 && executor_id === user.user.id)} 
+                                    value={priority} 
+                                    onChange={(e) => setPriority(e.target.value)}>
                                     <option value="Низкий">Низкий</option>
                                     <option value="Средний">Средний</option>
                                     <option value="Высокий">Высокий</option>
@@ -250,7 +256,10 @@ const Tasks = observer(() => {
 
                             <div  className="mt-4">
                                 <p>Ответственный</p>
-                                <Form.Select value={executor_id} onChange={(e) => {setExecutor_id(e.target.value)}}>
+                                <Form.Select 
+                                    disabled={(idTask !== 0 && executor_id === user.user.id)}
+                                    value={executor_id} 
+                                    onChange={(e) => {setExecutor_id(e.target.value)}}>
                                     {tasks.executors.map(executor => 
                                         <option key={executor.id} value={executor.id}>
                                             {executor.lastName} {executor.name} {executor.patronymic}

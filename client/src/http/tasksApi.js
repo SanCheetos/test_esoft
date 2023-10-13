@@ -18,14 +18,16 @@ export const update = async (
     dateComplete, 
     priority,
     status,
-    executor_id) => {
+    executor_id,
+    onlyStatus) => {
     const response = await $authHost.post(`/task/update/${id}`, { 
         heading, 
         desc, 
         dateComplete, 
         priority, 
         status,
-        executor_id
+        executor_id,
+        onlyStatus
     })
     return response
 }

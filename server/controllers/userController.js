@@ -38,7 +38,7 @@ class userController {
             return next(ApiError.internal('Неверный пароль'))
         }
         const token = generateJwt(user.id, user.login, user.lastName, user.name, user.patronymic, user.userId ? false : true)
-        return res.json({messa})
+        return res.json({token})
     }
 
     async getMyExecutors(req, res) {

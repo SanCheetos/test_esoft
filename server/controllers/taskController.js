@@ -57,7 +57,7 @@ class taskController {
     async update(req, res, next) {
         const userId = req.user.id
         const task = await Task.findOne({ where: { id: req.params.id }})
-        if (req.onlyStatus){
+        if (req.body.onlyStatus){
             if (task.creator_id != userId && task.executor_id != userId){
                 return next(ApiError.forbidden("Нет доступа для редактирования этой задачи!"))
             }
