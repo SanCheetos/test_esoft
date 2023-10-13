@@ -120,12 +120,12 @@ const Tasks = observer(() => {
         window.location.reload()
     }
     return (
-        <div>
+        <div className='p-5'>
             <h1>Добро пожаловать, {user.user.name}</h1>
-            <Button onClick={logOut}>
+            <Button className='mt-3' onClick={logOut}>
                 Выйти
             </Button>
-            <Button onClick={async () => {
+            <Button className='m-3 mb-0' onClick={async () => {
                 setIdTask(-1)
                 setIsTaskForm(true)
                 }}>
@@ -133,12 +133,12 @@ const Tasks = observer(() => {
             </Button>
             {user.user.name === "root"
             &&
-                <div>
+                <div className='mt-3'>
                     <Button onClick={() => setAdminPanel(true)}>Показать админ-панель</Button>
                 </div>
                 
             }
-            <Card>
+            <Card style={{width: 1000}} className="p-5 mt-3">
                 <div>
                     <h3>Задание на:</h3>
                     <Form.Select value={ordering.time} onChange={(e) => setOrdering({...ordering, time: e.target.value})}>
